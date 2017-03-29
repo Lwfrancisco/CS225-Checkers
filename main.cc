@@ -3,26 +3,37 @@
 using namespace std;
 
 class piece {
- int color;  // 0 is none, 1 is white, 2 is black
- bool king;  // 0 is normal piece, 1 is king
+ public:
+  int color = 0;  // 0 is none, 1 is white, 2 is black
+  bool king = 0;  // 0 is normal piece, 1 is king
+  
  
 };
 
 class checkerboard {
  public:
-   checkerboard();    
-   //display();
+   piece board[8][8];
+   checkerboard();
+   void display();
    
 };
  
 int main(){
  checkerboard a;
- 
+ a.display();
  
 }
 
-checkerboard::checkerboard(){
-    piece board[8][8];
-    
 
+
+void checkerboard::display(){
+ 
+ for(int j=0; j < 8; j++){
+
+  for (int i=0; i < 8; i++){
+   cout << board[i][j].color << "  ";
+  }
+
+  cout << endl;
+ }
 }
