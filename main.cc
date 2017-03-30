@@ -34,16 +34,25 @@ int main(){
 
 }
 
+/*
+ * Initializes board to correct configuration.
+ */
+
 checkerboard::checkerboard(){
 
-	for(int j=0; j < 8; j++){
+/*
+ * j is row, i is column on checkerboard
+ */
 
-	  for (int i=0; i < 8; i+=2){
-	   board[i][j].color = 1;
-	  }
+	for(int j=0; j < 2; j++){
+		for (int i=0; i < 8; i+=2){
+			board[i+j][j].color = 1;
+		}
 
-	  cout << endl;
-	 }
+		for (int i=0; i < 8; i+=2){
+			board[i+j][j+6].color = 2;
+		}
+	}
 }
 
 void checkerboard::display(){
