@@ -41,40 +41,39 @@ int main(){
 checkerboard::checkerboard(){
 
 /*
- * j is row, i is column on checkerboard
+ * Initialize "1" or top half of board.
  */
+	for(int row = 0; row < 3; row++){
 
-/*
-	for(int j=0; j < 3; j++){
-		for (int i=0; i < 8; i+=2){
-			board[i+(j%2)][j].color = 1;
+		for(int col = 0; col < 8; col += 2){
+			board[col+(row%2)][row].color = 1;
 		}
 	}
-*/
+
+/*
+ * Initialize "2" or bottom half of board.
+ */
+	for(int row = 5; row < 8; row++){
+
+		for(int col = 0; col < 8; col += 2){
+			board[col+(row%2)][row].color = 2;
+		}
+	}
+
 	for(int row=0; row < 8; row++){
-		for (int col=0; col < 8; col++){
+
+		for(int col = 0; col < 8; col++){
 			board[col][row].position = (col+1) + (row * 8);
 		}
 	}
 
-	/*
-	for(int position = 1; position < 24; position+=2){
-		for(int row=0; row < 8; row++){
-			for (int col=0; col < 8; col++){
-				if(board[col][row].position == position){
-					board[col][row].color = 1;
-				}
-			}
-		}
-	}
-*/
 }
 
 void checkerboard::display(){
 
 	for(int j=0; j < 8; j++){
 
-		for (int i=0; i < 8; i++){
+		for(int i=0; i < 8; i++){
 			cout << board[i][j].color << "  ";
 		}
 
