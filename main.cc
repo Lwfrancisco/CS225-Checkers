@@ -146,8 +146,10 @@ void checkerboard::action_sequence(char start_row, int start_col){
 
 	cout << "Enter Column to move to: ";
 	cin >> finish_col;
+	finish_col = finish_col-1;
 
 	start = board[int_start_row][start_col];
+	finish = board[int_finish_row][finish_col];
 
 	move(&start, &finish);
 
@@ -198,4 +200,10 @@ bool checkerboard::jump_check(int row, int col){
 
 void checkerboard::move(piece *start, piece *finish){
 
+	finish->color = start->color;
+	finish->king = start->king;
+	start->color = 0;
+	start->king = false;
+
+	cout << "Color: " << finish->color << " king? " << finish->king << endl;
 }
