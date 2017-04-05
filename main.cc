@@ -34,6 +34,8 @@ class checkerboard {
    void display();
    void action_sequence(char, int);
    bool move_check(int, int);
+   bool jump_check(int, int);
+   void move(piece *, piece *);
 
 };
 
@@ -93,35 +95,13 @@ checkerboard::checkerboard(){
 
 void checkerboard::display(){
 
+	char row_offset = 'A';
+
 	for(int row=0; row < 8; row++){
 
 		// row labeling
-		switch(row){
-			case 0:
-				cout << "A  ";
-				break;
-			case 1:
-				cout << "B  ";
-				break;
-			case 2:
-				cout << "C  ";
-				break;
-			case 3:
-				cout << "D  ";
-				break;
-			case 4:
-				cout << "E  ";
-				break;
-			case 5:
-				cout << "F  ";
-				break;
-			case 6:
-				cout << "G  ";
-				break;
-			case 7:
-				cout << "H  ";
-				break;
-		}
+		cout << row_offset << "  ";
+		row_offset++;
 
 		// Converts the number representation within our code into letter representation.
 		for(int col=0; col < 8; col++){
@@ -147,18 +127,41 @@ void checkerboard::display(){
  * Performs all necessary actions for movement and jumping.
  */
 
-void checkerboard::action_sequence(char row, int col){
+void checkerboard::action_sequence(char start_row, int start_col){
 
-	int int_row;
+	int int_start_row, int_finish_row, finish_col;
+	char finish_row;
+	piece start, finish;
 
-	cout << "Inside act_seq!!!" << endl;
-
-	int_row = row - 'A';
+	// Converts selected piece's row in letters to a numerical input.
+	int_start_row = start_row - 'A';
 
 	// col-1 is subtracting 1 from the input of the user's column, because the user is given column from 1-8 and the array is from 0-7
-	if(move_check(int_row, col-1)){
+	start_col = start_col - 1;
+
+
+	cout << "Which space would you like to move to?" << endl << "Enter Row to move to: ";
+	cin >> finish_row;
+	int_finish_row = finish_row - 'A';
+
+	cout << "Enter Column to move to: ";
+	cin >> finish_col;
+
+	start = board[int_start_row][start_col];
+
+	move(&start, &finish);
+
+
+/*
+	if(move_check(int_row, col)){
 		cout << "error" << endl;
 	}
+
+	if(jump_check(int_row, col)){
+		cout << "error" << endl;
+	}
+*/
+
 }
 
 /*
@@ -172,4 +175,27 @@ bool checkerboard::move_check(int row, int col){
 
 
 	return error;
+}
+
+/*
+ * checkerboard::jump_check
+ * Purpose:
+ * Check for possible jump points.
+ */
+
+bool checkerboard::jump_check(int row, int col){
+	bool error = false;
+
+
+	return error;
+}
+
+/*
+ * checkerboard::move
+ * Purpose:
+ * Moves a piece into a new position.
+ */
+
+void checkerboard::move(piece *start, piece *finish){
+
 }
