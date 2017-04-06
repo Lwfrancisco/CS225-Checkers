@@ -32,7 +32,8 @@ class checkerboard {
    piece board[8][8];
    checkerboard();
    void display();
-   void action_sequence(char, int);
+   void load_game();
+   void action_sequence();
    bool move_check(int, int);
    bool jump_check(int, int);
    void move(piece *, piece *);
@@ -41,20 +42,31 @@ class checkerboard {
 
 int main(){
 
-	char user_input_row;
-	int user_input_col;
 	checkerboard a;
 
-	// Displays checkerboard
-	a.display();
+	/*
+	 * player: 2 player game, bool indicates which player's turn it is.
+	 * TERMINATED: indicates the game is over when true.
+	 */
+	bool player = 0, TERMINATED = 0;
 
-	cout << "Please select a piece to move." << endl;
-	cout << "Enter Row: ";
-	cin >> user_input_row;
-	cout << "Enter Column: ";
-	cin >> user_input_col;
+	// prompts the user if they want to load an old savegame file.
+	a.load_game();
 
-	a.action_sequence(user_input_row, user_input_col);
+	while (!TERMINATED){
+
+		// Displays checkerboard
+		a.display();
+
+		cout << "Player " << player << "'s turn." << endl;
+
+		player = !player;
+
+
+		// Main action sequence where a piece is selected and movement/jumping is handled.
+		a.action_sequence();
+
+	}
 }
 
 /*
@@ -122,16 +134,43 @@ void checkerboard::display(){
 }
 
 /*
+ * checkerboard::load_game
+ * file IO, will load board if a savegame file exists. Prompts user.
+ */
+
+void checkerboard::load_game(){
+	bool user_input;
+
+	cout << "Load save game or play new game? (1 is load save game and 0 is play new): ";
+	cin >> user_input;
+
+	if (user_input == 1){
+		cout << "Loading save game..." << endl;
+		// file input = someCheckerboardVariable;
+		// someCheckerbaordVariable = board;
+	}
+	else {
+		cout << "Playing new game..." << endl;
+	}
+}
+
+/*
  * checkerboard::action_sequence
  * Purpose:
  * Performs all necessary actions for movement and jumping.
  */
 
-void checkerboard::action_sequence(char start_row, int start_col){
+void checkerboard::action_sequence(){
 
-	int int_start_row, int_finish_row, finish_col;
-	char finish_row;
+	int int_start_row, start_col, int_finish_row, finish_col;
+	char start_row, finish_row;
 	piece start, finish;
+
+	cout << "Please select a piece to move." << endl;
+	cout << "Enter Row: ";
+	cin >> start_row;
+	cout << "Enter Column: ";
+	cin >> start_col;
 
 	// Converts selected piece's row in letters to a numerical input.
 	int_start_row = start_row - 'A';
