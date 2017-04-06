@@ -1,13 +1,3 @@
-/*
- * main.cc
- *
- *  Created on: Mar 10, 2017
- *      Author(s): Logan Francisco, Jacob Lai, Steven Harvey
- */
-
-
-
-
 #include <iostream>
 
 using namespace std;
@@ -20,7 +10,12 @@ class piece {
  public:
   int color = 0;  // 0 is none, 1 is white, 2 is black
   bool king = 0;  // 0 is normal piece, 1 is king
+    void operator=(piece& p){   // Assignment operator overloading.
 
+        color = p.color;
+        king = p.king;
+
+    }
 };
 
 /*
@@ -36,7 +31,7 @@ class checkerboard {
    void action_sequence();
    bool move_check(int, int);
    bool jump_check(int, int);
-   void move(piece *, piece *);
+   void move(piece&, piece&);
 
 };
 
@@ -44,29 +39,32 @@ int main(){
 
 	checkerboard a;
 
-	/*
-	 * player: 2 player game, bool indicates which player's turn it is.
-	 * TERMINATED: indicates the game is over when true.
-	 */
+
+/*
+ * player: 2 player game, bool indicates which player's turn it is.
+ * TERMINATED: indicates the game is over when true.
+ */
 	bool player = 0, TERMINATED = 0;
 
 	// prompts the user if they want to load an old savegame file.
 	a.load_game();
 
-	while (!TERMINATED){
 
-		// Displays checkerboard
+	while(!TERMINATED){
+
+		// Update the board.
 		a.display();
 
 		cout << "Player " << player << "'s turn." << endl;
 
 		player = !player;
 
-
-		// Main action sequence where a piece is selected and movement/jumping is handled.
 		a.action_sequence();
 
+
+		TERMINATED = true;
 	}
+
 }
 
 /*
@@ -80,11 +78,18 @@ checkerboard::checkerboard(){
 /*
  * Initialize "1" or white in the top half of the board.
  */
+//	for(int row = 0; row < 3; row++){
+//
+//		for(int col = 0; col < 8; col += 2){
+//			board[col+(row%2)][row].color = 1;
+//		}
+//	}
+
 	for(int row = 0; row < 3; row++){
 
-		for(int col = 0; col < 8; col += 2){
-			board[col+(row%2)][row].color = 1;
-		}
+        for(int col = 0; col < 8; col += 2)
+            board[row][col+(row%2)].color = 1;
+
 	}
 
 /*
@@ -93,7 +98,7 @@ checkerboard::checkerboard(){
 	for(int row = 5; row < 8; row++){
 
 		for(int col = 0; col < 8; col += 2){
-			board[col+(row%2)][row].color = 2;
+			board[row][col+(row%2)].color = 2;
 		}
 	}
 
@@ -119,9 +124,9 @@ void checkerboard::display(){
 		for(int col=0; col < 8; col++){
 			char type;
 
-			if(board[col][row].color == 1) type = 'W';
-			else if(board[col][row].color == 2) type = 'B';
-			else if(board[col][row].color == 0) type = '-';
+			if(board[row][col].color == 1) type = 'W';
+			else if(board[row][col].color == 2) type = 'B';
+			else if(board[row][col].color == 0) type = '-';
 
 			cout << type << "  ";
 		}
@@ -190,20 +195,22 @@ void checkerboard::action_sequence(){
 	start = board[int_start_row][start_col];
 	finish = board[int_finish_row][finish_col];
 
-	move(&start, &finish);
-
-
-/*
-	if(move_check(int_row, col)){
-		cout << "error" << endl;
-	}
-
-	if(jump_check(int_row, col)){
-		cout << "error" << endl;
-	}
-*/
+	/*
+	 * if finish_row and finish_col indicate a normal "move", then:
+	 * move check for a valid move
+	 * move if valid
+	 *
+	 * else if finish_row and finish_col indicate a "jump", then:
+	 * jump check for a valid jump
+	 * jump if valid
+	 *
+	 * else:
+	 * dunno wtf yet
+	 */
+	move(start, finish);
 
 }
+
 
 /*
  * checkerboard::move_check
@@ -214,6 +221,9 @@ void checkerboard::action_sequence(){
 bool checkerboard::move_check(int row, int col){
 	bool error = false;
 
+	// For normal pieces.
+    //  Forward left is [row-1][col-1]
+    //  Forward right is [row-1][col+1]
 
 	return error;
 }
@@ -237,12 +247,15 @@ bool checkerboard::jump_check(int row, int col){
  * Moves a piece into a new position.
  */
 
-void checkerboard::move(piece *start, piece *finish){
+void checkerboard::move(piece& start, piece& finish){
 
-	finish->color = start->color;
-	finish->king = start->king;
-	start->color = 0;
-	start->king = false;
+    finish = start;
 
-	cout << "Color: " << finish->color << " king? " << finish->king << endl;
+	// Make the original piece blank.
+	start.color = 0;
+	start.king = false;
+
+	cout << "   Color of finish is: " << finish.color << endl;
+	cout << "   Is it king? " << finish.king << endl;
+
 }
