@@ -37,7 +37,8 @@ class checkerboard {
    void display();
    void load_game();
    void action_sequence();
-   bool move_check(int, int);
+   bool move_check(piece&, int, int, piece&, int, int);
+   bool move_check(piece&);
    bool jump_check(int, int);
    void move(piece&, piece&);
    bool end_game_check();
@@ -91,6 +92,8 @@ checkerboard::checkerboard(){
 void checkerboard::display(){
 
 	char row_offset = 'A';
+
+	cout << "Checkers Board: " << endl;
 
 	for(int row=0; row < 8; row++){
 
@@ -148,6 +151,7 @@ void checkerboard::action_sequence(){
 	int int_start_row, start_col, int_finish_row, finish_col;
 	char start_row, finish_row;
 
+
 	cout << "Please select a piece to move." << endl;
 	cout << "Enter Row: ";
 	cin >> start_row;
@@ -160,6 +164,15 @@ void checkerboard::action_sequence(){
 	// col-1 is subtracting 1 from the input of the user's column, because the user is given column from 1-8 and the array is from 0-7
 	start_col = start_col - 1;
 
+    piece& start = board[int_start_row][start_col];
+
+    // Error checking.
+    if(move_check(start)){
+
+        // Illegal move start again.
+        action_sequence();
+
+    }
 
 	cout << "Which space would you like to move to?" << endl << "Enter Row to move to: ";
 	cin >> finish_row;
@@ -169,8 +182,15 @@ void checkerboard::action_sequence(){
 	cin >> finish_col;
 	finish_col = finish_col-1;
 
-	piece &start = board[int_start_row][start_col];
-	piece &finish = board[int_finish_row][finish_col];
+	piece& finish = board[int_finish_row][finish_col];
+
+	// Error checking.
+	if(move_check(start, int_start_row, start_col, finish, int_finish_row, finish_col)){
+
+        // Illegal move start again.
+        action_sequence();
+
+	}
 
 	/*
 	 * if finish_row and finish_col indicate a normal "move", then:
@@ -195,14 +215,43 @@ void checkerboard::action_sequence(){
  * Checks if the user's input of movement is valid.
  */
 
-bool checkerboard::move_check(int row, int col){
-	bool error = false;
+bool checkerboard::move_check(piece& start){
+ 	bool error = 1;
+
+	if(start.color == 0){
+
+        cout << "Illegal move - No checker there!!!\n";
+        return error;
+
+	}
+	else return 0;
+}
+
+bool checkerboard::move_check(piece& start, int s_row, int s_col, piece& finish, int f_row, int f_col){
+    bool error = 1;
+
+	if(f_col == s_col){ // Moving straight, not diagonally.
+
+        cout << "Illegal move - Can't move straight!!!\n";
+        return error;
+
+	}
+    else if(f_row >= s_row){ // Can't move backwards or horizontally.
+
+        cout << "Illegal move - Can't move backwards or horizontally!!!\n";
+        return error;
+
+    }
+    else
+
+        return 0;
+//    else if()
+
 
 	// For normal pieces.
     //  Forward left is [row-1][col-1]
     //  Forward right is [row-1][col+1]
 
-	return error;
 }
 
 /*
@@ -232,9 +281,10 @@ void checkerboard::move(piece& start, piece& finish){
 	start.color = 0;
 	start.king = false;
 
-	cout << "   Color of finish is: " << finish.color << endl;
-	cout << "   Is it king? " << finish.king << endl;
-
+	/* debugging:
+		cout << "   Color of finish is: " << finish.color << endl;
+		cout << "   Is it king? " << finish.king << endl;
+	*/
 }
 
 /*
