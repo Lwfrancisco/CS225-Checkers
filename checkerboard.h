@@ -40,6 +40,7 @@ class checkerboard {
    bool move_check(int, int);
    bool jump_check(int, int);
    void move(piece&, piece&);
+   bool end_game_check();
 
 };
 
@@ -146,7 +147,6 @@ void checkerboard::action_sequence(){
 
 	int int_start_row, start_col, int_finish_row, finish_col;
 	char start_row, finish_row;
-	piece start, finish;
 
 	cout << "Please select a piece to move." << endl;
 	cout << "Enter Row: ";
@@ -169,8 +169,8 @@ void checkerboard::action_sequence(){
 	cin >> finish_col;
 	finish_col = finish_col-1;
 
-	start = board[int_start_row][start_col];
-	finish = board[int_finish_row][finish_col];
+	piece &start = board[int_start_row][start_col];
+	piece &finish = board[int_finish_row][finish_col];
 
 	/*
 	 * if finish_row and finish_col indicate a normal "move", then:
@@ -237,5 +237,43 @@ void checkerboard::move(piece& start, piece& finish){
 
 }
 
+/*
+ * checkerboard::end_game_check
+ * Purpose:
+ * Checks if game has ended.
+ */
+
+bool checkerboard::end_game_check(){
+
+	/*
+	 * white and black are automatically assumed to be extinct until the check proves otherwise.
+	 * However, the end of game is not assumed to be true until proven otherwise.
+	 */
+	bool white_exists = false, black_exists = false, end_of_game = false;
+
+
+	for(int row=0; row < 8; row++){
+
+		for(int col=0; col < 8; col++){
+
+			if(board[row][col].color == 1) white_exists = true;
+			else if(board[row][col].color == 2) black_exists = true;
+		}
+
+	}
+
+	if(white_exists ^ black_exists){
+		end_of_game = true;
+
+		if(white_exists){
+			cout << "White wins!!!" << endl;
+		}
+		else {
+			cout << "Black wins!!!" << endl;
+		}
+	}
+
+	return end_of_game;
+}
 
 #endif /* CHECKERBOARD_H_ */
