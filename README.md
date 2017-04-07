@@ -7,5 +7,7 @@
 -Complete move check
 
   -Can move to invalid space still (ex F2 to E4)
+
+-Jump check
   
 -Save Game
