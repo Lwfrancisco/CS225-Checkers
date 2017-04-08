@@ -9,3 +9,5 @@
 -Jump check
   
 -Save Game
+
+-add exceptions
