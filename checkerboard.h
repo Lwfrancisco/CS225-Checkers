@@ -35,8 +35,7 @@ class checkerboard {
    piece board[8][8];
    checkerboard();
    void display();
-   void load_game();
-   void action_sequence();
+   void action_sequence(bool player_turn);
    bool move_check(piece&, int, int, piece&, int, int);
    bool move_check(piece&);
    bool jump_check(int, int);
@@ -120,33 +119,12 @@ void checkerboard::display(){
 }
 
 /*
- * checkerboard::load_game
- * file IO, will load board if a savegame file exists. Prompts user.
- */
-
-void checkerboard::load_game(){
-	bool user_input;
-
-	cout << "Load save game or play new game? (1 is load save game and 0 is play new): ";
-	cin >> user_input;
-
-	if (user_input == 1){
-		cout << "Loading save game..." << endl;
-		// file input = someCheckerboardVariable;
-		// someCheckerbaordVariable = board;
-	}
-	else {
-		cout << "Playing new game..." << endl;
-	}
-}
-
-/*
  * checkerboard::action_sequence
  * Purpose:
  * Performs all necessary actions for movement and jumping.
  */
 
-void checkerboard::action_sequence(){
+void checkerboard::action_sequence(bool player){
 
 	int int_start_row, start_col, int_finish_row, finish_col;
 	char start_row, finish_row;
@@ -170,7 +148,7 @@ void checkerboard::action_sequence(){
     if(move_check(start)){
 
         // Illegal move start again.
-        action_sequence();
+        action_sequence(player);
 
     }
 
@@ -188,7 +166,7 @@ void checkerboard::action_sequence(){
 	if(move_check(start, int_start_row, start_col, finish, int_finish_row, finish_col)){
 
         // Illegal move start again.
-        action_sequence();
+        action_sequence(player);
 
 	}
 
