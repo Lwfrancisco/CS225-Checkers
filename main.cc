@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include "checkerboard.h"
-#include "savegame.h"
 
 using namespace std;
 
@@ -17,17 +16,16 @@ int main(){
 	bool player = 0, TERMINATED = 0;
 
 	// prompts the user if they want to load an old savegame file.
-	//a.load_game();
+	load_game(&a, &player);
 
 
 	while(!TERMINATED){
 
-		// Update the board.
-		a.display();
-
 		cout << "Player " << player << "'s turn." << endl;
 
-		a.action_sequence(player);
+		if (a.action_sequence(player)){
+			save_game(a, player);
+		}
 
 		player = !player;
 
