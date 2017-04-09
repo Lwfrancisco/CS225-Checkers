@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include "checkerboard.h"
+#include "savegame.h"
 
 using namespace std;
 
@@ -15,7 +17,7 @@ int main(){
 	bool player = 0, TERMINATED = 0;
 
 	// prompts the user if they want to load an old savegame file.
-	a.load_game();
+	//a.load_game();
 
 
 	while(!TERMINATED){
@@ -25,12 +27,11 @@ int main(){
 
 		cout << "Player " << player << "'s turn." << endl;
 
+		a.action_sequence(player);
+
 		player = !player;
 
-		a.action_sequence();
-
-
-		TERMINATED = true;
+		TERMINATED = a.end_game_check();
 	}
 
 }
