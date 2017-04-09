@@ -31,6 +31,7 @@ class checkerboard {
    int action_sequence(bool *player_turn);
    bool move_check(piece&);
    void move(piece&, piece&, bool*);
+   void jump(piece&, piece&, bool*);
    bool end_game_check();
 
    bool black_move_check(piece&, int, int, piece&, int, int);
@@ -51,13 +52,6 @@ checkerboard::checkerboard(){
 /*
  * Initialize "1" or white in the top half of the board.
  */
-//	for(int row = 0; row < 3; row++){
-//
-//		for(int col = 0; col < 8; col += 2){
-//			board[col+(row%2)][row].color = 1;
-//		}
-//	}
-
 	for(int row = 0; row < 3; row++){
 
         for(int col = 0; col < 8; col += 2)
@@ -123,87 +117,85 @@ int checkerboard::action_sequence(bool *player){
 
 	int int_start_row, start_col, int_finish_row, finish_col;
 	char start_row, finish_row;
-	bool ERROR = false;
 
 
-	do{
+	// Update the board.
+	display();
 
-		// Update the board.
-		display();
+	cout << "Please select a piece to move or type 'S' to save game." << endl;
+	cout << "Enter Row: ";
+	cin >> start_row;
+	if (start_row == 'S'){
+		return 1;	// 1 means save game is needed.
+	}
+	cout << "Enter Column: ";
+	cin >> start_col;
 
-		cout << "Please select a piece to move or type 'S' to save game." << endl;
-		cout << "Enter Row: ";
-		cin >> start_row;
-		if (start_row == 'S'){
-			return 1;	// 1 means save game is needed.
-		}
-		cout << "Enter Column: ";
-		cin >> start_col;
+	// Converts selected piece's row in letters to a numerical input.
+	int_start_row = start_row - 'A';
 
-		// Converts selected piece's row in letters to a numerical input.
-		int_start_row = start_row - 'A';
+	// col-1 is subtracting 1 from the input of the user's column, because the user is given column from 1-8 and the array is from 0-7
+	start_col = start_col - 1;
 
-		// col-1 is subtracting 1 from the input of the user's column, because the user is given column from 1-8 and the array is from 0-7
-		start_col = start_col - 1;
+    piece& start = board[int_start_row][start_col];
 
-	    piece& start = board[int_start_row][start_col];
+    if (start.color == 1 && *player == 1){
 
-	    // Error checking.
-	    if(move_check(start)){
+    	cout << "Illegal piece. Please choose a black piece." << endl;
 
-	    	ERROR = true;
-	        continue;
-	    }
+    	return 0;
+    }
 
-		cout << "Which space would you like to move to?" << endl << "Enter Row to move to: ";
-		cin >> finish_row;
-		int_finish_row = finish_row - 'A';
+    if (start.color == 2 && *player == 0){
 
-		cout << "Enter Column to move to: ";
-		cin >> finish_col;
-		finish_col = finish_col-1;
+    	cout << "Illegal piece. Please choose a white piece." << endl;
 
-		piece& finish = board[int_finish_row][finish_col];
+    	return 0;
+    }
 
+    // Error checking.
+    if(move_check(start)){
 
-	    // Rules checking.
-	    // Determine whether it's a move or a jump.
+        return 0;
+    }
 
+	cout << "Which space would you like to move to?" << endl << "Enter Row to move to: ";
+	cin >> finish_row;
+	int_finish_row = finish_row - 'A';
 
-	    if((finish_col - start_col) > 1){   // This is a jump.
+	cout << "Enter Column to move to: ";
+	cin >> finish_col;
+	finish_col = finish_col-1;
 
-	        if(black_jump_check(start, int_start_row, start_col, finish, int_finish_row, finish_col) == 0){
-
-	            if(finish_col < start_col) // Left jump.
-	                board[int_finish_row - 1][finish_col - 1].color = 0;    // Eat enemy checker.
-
-	            else if(finish_col > start_col) // Right jump.
-	                board[int_finish_row - 1][finish_col + 1].color = 0;    // Eat enemy checker.
-
-	            move(start, finish, player);
-
-	            return 0;
-
-	        }
-	        else ERROR = true;     // Illegal move start again.
-
-	    }
-	    else{		    	// This is a move.
-
-	        if(black_move_check(start, int_start_row, start_col, finish, int_finish_row, finish_col) == 0){
-
-	            move(start, finish, player);
-
-	            return 0;
-	        }
+	piece& finish = board[int_finish_row][finish_col];
 
 
-	        else ERROR = true;     // Illegal move start again.
-	    }
+    // Rules checking.
+    // Determine whether it's a move or a jump.
 
 
+    if((finish_col - start_col) > 1){   // This is a jump.
 
-	}while(ERROR);
+        if(black_jump_check(start, int_start_row, start_col, finish, int_finish_row, finish_col) == 0){
+
+            if(finish_col < start_col) // Left jump.
+                board[int_finish_row - 1][finish_col - 1].color = 0;    // Eat enemy checker.
+
+            else if(finish_col > start_col) // Right jump.
+                board[int_finish_row - 1][finish_col + 1].color = 0;    // Eat enemy checker.
+
+            move(start, finish, player);
+
+        }
+
+    }
+    else{		    	// This is a move.
+
+        if(black_move_check(start, int_start_row, start_col, finish, int_finish_row, finish_col) == 0){
+
+            move(start, finish, player);
+        }
+    }
 
 
 	return 0; // all is well
@@ -351,6 +343,7 @@ void checkerboard::move(piece& start, piece& finish, bool *player){
 	start.king = false;
 
 	*player = !(*player);
+
 
 	/* debugging:
 		cout << "   Color of finish is: " << finish.color << endl;
