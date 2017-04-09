@@ -4,26 +4,34 @@
 using namespace std;
 
 /*
+ * Parameters class contains all the necessary operating parameters
+ */
+
+class parameters {
+
+private:
+	int start_row, start_col;
+	int finish_row, finish_col;
+
+};
+
+/*
  * Each object of the piece class represents a single square on the checkerboard, empty or otherwise.
  */
 
 class piece {
  public:
-  int color = 0;  // 0 is none, 1 is white, 2 is black
+  int color = 0, row, col;  // 0 is none, 1 is white, 2 is black
   bool king = 0;  // 0 is normal piece, 1 is king
-    void operator=(piece& p){   // Assignment operator overloading.
 
-        color = p.color;
-        king = p.king;
 
-    }
 };
 
 /*
  * Primary class. Contains all relevant info on the status of the game.
  */
 
-class checkerboard {
+class checkerboard:public parameters {
  public:
    piece board[8][8];
    checkerboard();
@@ -31,8 +39,8 @@ class checkerboard {
    void display();
    int action_sequence(bool *player_turn);
    bool move_check(piece&);
-   void move(piece&, piece&, bool*);
-   void jump(piece&, piece&, bool*);
+   void move(piece&, piece&);
+   void jump(piece&, piece&);
    bool end_game_check();
 
    bool move_check(piece&, int, int, piece&, int, int, bool*);
@@ -186,7 +194,9 @@ int checkerboard::action_sequence(bool *player){
 
         if(jump_check(start, int_start_row, start_col, finish, int_finish_row, finish_col, player) == 0){
 
-            move(start, finish, player);
+        	move(start, finish);
+
+        	*player = !(*player);
 
         }
 
@@ -195,8 +205,9 @@ int checkerboard::action_sequence(bool *player){
 
         if(move_check(start, int_start_row, start_col, finish, int_finish_row, finish_col, player) == 0){
 
-            move(start, finish, player);
+            move(start, finish);
 
+            *player = !(*player);
         }
 
     }
@@ -303,7 +314,7 @@ bool checkerboard::jump_check(piece& start, int s_row, int s_col, piece& finish,
  * Moves a piece into a new position.
  */
 
-void checkerboard::move(piece& start, piece& finish, bool *player){
+void checkerboard::move(piece& start, piece& finish){
 
     finish = start;
 
@@ -311,13 +322,34 @@ void checkerboard::move(piece& start, piece& finish, bool *player){
 	start.color = 0;
 	start.king = false;
 
-	*player = !(*player);
-
 
 	/* debugging:
 		cout << "   Color of finish is: " << finish.color << endl;
 		cout << "   Is it king? " << finish.king << endl;
 	*/
+}
+
+/*
+ * checkerboard::jump
+ * Purpose:
+ * Jumps a piece into a new position.
+ */
+
+void checkerboard::jump(piece& start, piece& finish){
+
+	finish = start;
+
+	// Make the original piece blank.
+	start.color = 0;
+	start.king = false;
+
+	/*
+	do{
+		cout << "Do you want to continue jumping? (1 for yes and 0 for no): ";
+		cin >> user_input;
+
+
+	}*/
 }
 
 /*
