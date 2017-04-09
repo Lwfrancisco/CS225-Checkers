@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 #include "checkerboard.h"
 
 using namespace std;
@@ -23,11 +24,10 @@ int main(){
 
 		cout << "Player " << player << "'s turn." << endl;
 
-		if (a.action_sequence(player)){
+		if (a.action_sequence(&player)){
 			save_game(a, player);
 		}
 
-		player = !player;
 
 		TERMINATED = a.end_game_check();
 	}
