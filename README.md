@@ -4,10 +4,10 @@
 ## Things to do:
 -Player can only move their own pieces.
 
--Complete move check... Can move to invalid space still (ex F2 to E4)
+-Multi-jump (part of player turns???)
 
--Jump check
-  
--Save Game
+-White + black checks merge
+
+-King stuff
 
 -add exceptions
