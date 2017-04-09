@@ -28,9 +28,9 @@ class checkerboard {
    piece board[8][8];
    checkerboard();
    void display();
-   int action_sequence(bool player_turn);
+   int action_sequence(bool *player_turn);
    bool move_check(piece&);
-   void move(piece&, piece&);
+   void move(piece&, piece&, bool*);
    bool end_game_check();
 
    bool black_move_check(piece&, int, int, piece&, int, int);
@@ -119,10 +119,11 @@ void checkerboard::display(){
  * Performs all necessary actions for movement and jumping.
  */
 
-int checkerboard::action_sequence(bool player){
+int checkerboard::action_sequence(bool *player){
 
 	int int_start_row, start_col, int_finish_row, finish_col;
 	char start_row, finish_row;
+	bool ERROR = false;
 
 
 	do{
@@ -150,6 +151,7 @@ int checkerboard::action_sequence(bool player){
 	    // Error checking.
 	    if(move_check(start)){
 
+	    	ERROR = true;
 	        continue;
 	    }
 
@@ -166,6 +168,8 @@ int checkerboard::action_sequence(bool player){
 
 	    // Rules checking.
 	    // Determine whether it's a move or a jump.
+
+
 	    if((finish_col - start_col) > 1){   // This is a jump.
 
 	        if(black_jump_check(start, int_start_row, start_col, finish, int_finish_row, finish_col) == 0){
@@ -176,30 +180,30 @@ int checkerboard::action_sequence(bool player){
 	            else if(finish_col > start_col) // Right jump.
 	                board[int_finish_row - 1][finish_col + 1].color = 0;    // Eat enemy checker.
 
-	            move(start, finish);
+	            move(start, finish, player);
 
 	            return 0;
 
 	        }
-	        else continue;     // Illegal move start again.
+	        else ERROR = true;     // Illegal move start again.
 
 	    }
 	    else{		    	// This is a move.
 
 	        if(black_move_check(start, int_start_row, start_col, finish, int_finish_row, finish_col) == 0){
 
-	            move(start, finish);
+	            move(start, finish, player);
 
 	            return 0;
 	        }
 
 
-	        else continue;     // Illegal move start again.
+	        else ERROR = true;     // Illegal move start again.
 	    }
 
 
 
-	}while(!end_game_check());
+	}while(ERROR);
 
 
 	return 0; // all is well
@@ -338,13 +342,15 @@ bool white_jump_check(piece& start, int s_row, int s_col, piece& finish, int f_r
  * Moves a piece into a new position.
  */
 
-void checkerboard::move(piece& start, piece& finish){
+void checkerboard::move(piece& start, piece& finish, bool *player){
 
     finish = start;
 
 	// Make the original piece blank.
 	start.color = 0;
 	start.king = false;
+
+	*player = !(*player);
 
 	/* debugging:
 		cout << "   Color of finish is: " << finish.color << endl;
@@ -434,7 +440,7 @@ void save_game(checkerboard obj, bool player_turn){
 
 		fout.close();
 
-		exit(EXIT_SUCCESS);
+		exit(0);
 	}
 	else {
 		cout << "Returning to the regularly scheduled massacre." << endl;
