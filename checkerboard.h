@@ -9,7 +9,7 @@ using namespace std;
 
 class parameters {
 
-private:
+public:
 	int start_row, start_col;
 	int finish_row, finish_col;
 
@@ -43,8 +43,8 @@ class checkerboard:public parameters {
    void jump(piece&, piece&);
    bool end_game_check();
 
-   bool move_check(piece&, int, int, piece&, int, int, bool*);
-   bool jump_check(piece& start, int s_row, int s_col, piece& finish, int f_row, int f_col, bool*);
+   bool move_check(piece&, piece&, bool*);
+   bool jump_check(piece& start, piece& finish, bool*);
 };
 
 /*
@@ -131,8 +131,7 @@ void checkerboard::display(){
 
 int checkerboard::action_sequence(bool *player){
 
-	int int_start_row, start_col, int_finish_row, finish_col;
-	char start_row, finish_row;
+	char char_start_row, char_finish_row;
 
 
 	// Update the board.
@@ -140,20 +139,20 @@ int checkerboard::action_sequence(bool *player){
 
 	cout << "Please select a piece to move or type 'S' to save game." << endl;
 	cout << "Enter Row: ";
-	cin >> start_row;
-	if (start_row == 'S'){
+	cin >> char_start_row;
+	if (char_start_row == 'S'){
 		return 1;	// 1 means save game is needed.
 	}
 	cout << "Enter Column: ";
 	cin >> start_col;
 
 	// Converts selected piece's row in letters to a numerical input.
-	int_start_row = start_row - 'A';
+	start_row = char_start_row - 'A';
 
 	// col-1 is subtracting 1 from the input of the user's column, because the user is given column from 1-8 and the array is from 0-7
 	start_col = start_col - 1;
 
-    piece& start = board[int_start_row][start_col];
+    piece& start = board[start_row][start_col];
 
     if (start.color == 1 && *player == 1){
 
@@ -176,14 +175,14 @@ int checkerboard::action_sequence(bool *player){
     }
 
 	cout << "Which space would you like to move to?" << endl << "Enter Row to move to: ";
-	cin >> finish_row;
-	int_finish_row = finish_row - 'A';
+	cin >> char_finish_row;
+	finish_row = char_finish_row - 'A';
 
 	cout << "Enter Column to move to: ";
 	cin >> finish_col;
 	finish_col = finish_col-1;
 
-	piece& finish = board[int_finish_row][finish_col];
+	piece& finish = board[finish_row][finish_col];
 
 
     // Rules checking.
@@ -192,7 +191,7 @@ int checkerboard::action_sequence(bool *player){
 
     if((finish_col - start_col) > 1){   // This is a jump.
 
-        if(jump_check(start, int_start_row, start_col, finish, int_finish_row, finish_col, player) == 0){
+        if(jump_check(start, finish, player) == 0){
 
         	move(start, finish);
 
@@ -203,7 +202,7 @@ int checkerboard::action_sequence(bool *player){
     }
     else{   // This is a move.
 
-        if(move_check(start, int_start_row, start_col, finish, int_finish_row, finish_col, player) == 0){
+        if(move_check(start, finish, player) == 0){
 
             move(start, finish);
 
@@ -235,7 +234,7 @@ bool checkerboard::move_check(piece& start){
 	else return 0;
 }
 
-bool checkerboard::move_check(piece& start, int s_row, int s_col, piece& finish, int f_row, int f_col, bool* player){
+bool checkerboard::move_check(piece& start, piece& finish, bool* player){
 
     if(finish.color != 0){
 
@@ -244,19 +243,19 @@ bool checkerboard::move_check(piece& start, int s_row, int s_col, piece& finish,
 
     }
 
-	if(f_col == s_col){ // Moving straight, not diagonally.
+	if(finish_col == start_col){ // Moving straight, not diagonally.
 
         cout << "Illegal move.\n";
         return 1;
 
 	}
-    else if(f_row >= s_row && *player == 1){ // Can't move backwards or horizontally. For black checkers.
+    else if(finish_row >= start_row && *player == 1){ // Can't move backwards or horizontally. For black checkers.
 
         cout << "Illegal move.\n";
         return 1;
 
     }
-    else if(f_row <= s_row && *player == 0){ // Can't move backwards or horizontally. For white checkers.
+    else if(finish_row <= start_row && *player == 0){ // Can't move backwards or horizontally. For white checkers.
 
         cout << "Illegal move.\n";
         return 1;
@@ -272,7 +271,7 @@ bool checkerboard::move_check(piece& start, int s_row, int s_col, piece& finish,
  * Check for possible jump points.
  */
 
-bool checkerboard::jump_check(piece& start, int s_row, int s_col, piece& finish, int f_row, int f_col, bool* player){
+bool checkerboard::jump_check(piece& start, piece& finish, bool* player){
 
     if(finish.color != 0){
 
@@ -280,25 +279,25 @@ bool checkerboard::jump_check(piece& start, int s_row, int s_col, piece& finish,
         return 1;
 
     }
-    else if((f_row != s_row - 2) && *player == 1){  // For black checkers.
+    else if((finish_row != start_row - 2) && *player == 1){  // For black checkers.
 
         cout << "Illegal move.\n";
         return 1;
 
     }
-    else if((f_col != s_col - 2 && f_col != s_col + 2) && *player == 1){    // For black checkers.
+    else if((finish_col != start_col - 2 && finish_col != start_col + 2) && *player == 1){    // For black checkers.
 
         cout << "Illegal move.\n";
         return 1;
 
     }
-    else if((f_row != s_row + 2) && *player == 0){  // For white checkers.
+    else if((finish_row != start_row + 2) && *player == 0){  // For white checkers.
 
         cout << "Illegal move - Can't jump there1.\n";
         return 1;
 
     }
-    else if((f_col != s_col - 2 && f_col != s_col + 2) && *player == 0){ // For white checkers.
+    else if((finish_col != start_col - 2 && finish_col != start_col + 2) && *player == 0){ // For white checkers.
 
         cout << "Illegal move - Can't jump there2.\n";
         return 1;
