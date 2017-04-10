@@ -1,3 +1,10 @@
+/*
+ * File: checkerboard.h
+ * Course: CS225
+ * Project: Checkers
+ * Authors: Logan, Jacob, Steven
+ */
+
 #ifndef CHECKERBOARD_H_
 #define CHECKERBOARD_H_
 
@@ -21,9 +28,7 @@ public:
 
 class piece {
  public:
-  int color = 0, row, col;  // 0 is none, 1 is white, 2 is black
-  bool king = 0;  // 0 is normal piece, 1 is king
-
+  int color = 0;  // 0 is none, 1 is white, 2 is black
 
 };
 
@@ -193,7 +198,7 @@ int checkerboard::action_sequence(bool *player){
 
         if(jump_check(start, finish, player) == 0){
 
-        	move(start, finish);
+        	jump(start, finish);
 
         	*player = !(*player);
 
@@ -319,7 +324,6 @@ void checkerboard::move(piece& start, piece& finish){
 
 	// Make the original piece blank.
 	start.color = 0;
-	start.king = false;
 
 
 	/* debugging:
@@ -338,17 +342,30 @@ void checkerboard::jump(piece& start, piece& finish){
 
 	finish = start;
 
+	// White
+	if (start.color == 1){
+		if (finish_col > start_col){						// White Left (from perspective up the board)
+			board[finish_row-1][finish_col-1].color = 0;
+		}
+		else {												// White Right (from perspective up the board)
+			board[finish_row-1][finish_col+1].color = 0;
+		}
+	}
+	else if (start.color == 2){
+		if (finish_col > start_col){						// Black Right (from perspective up the board)
+			board[finish_row+1][finish_col-1].color = 0;
+		}
+		else {												// Black Left (from perspective up the board)
+			board[finish_row+1][finish_col+1].color = 0;
+		}
+
+	}
+	else {
+
+	}
+
 	// Make the original piece blank.
 	start.color = 0;
-	start.king = false;
-
-	/*
-	do{
-		cout << "Do you want to continue jumping? (1 for yes and 0 for no): ";
-		cin >> user_input;
-
-
-	}*/
 }
 
 /*
@@ -395,7 +412,6 @@ istream& operator >> (istream& in, checkerboard& obj)
 	for (int row = 0; row < 8; row++){
 		for (int col = 0; col < 8; col++){
 		    in >> obj.board[row][col].color;
-		    in >> obj.board[row][col].king;
 		}
 	}
     return in;
@@ -406,7 +422,6 @@ ostream& operator << (ostream& out, const checkerboard& obj)
 	for (int row = 0; row < 8; row++){
 		for (int col = 0; col < 8; col++){
 		    out << obj.board[row][col].color << ' ';
-		    out << obj.board[row][col].king << endl;
 		}
 	}
 
